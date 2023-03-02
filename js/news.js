@@ -46,14 +46,14 @@ const newsContainer = document.getElementById('all-news');
 newsContainer.innerHTML = '';
 
 data.forEach(singleNews => {
-    const {_id,image_url,title,details,author,total_view} = (singleNews)
+    const {_id,image_url,title,details,author,total_view,rating} = (singleNews)
     // newsContainer.innerHTML +=
    const  card = document.createElement('div');
    card.classList.add('card', 'mb-3');
    card.innerHTML = `
    
-   <div class="row g-0">
-   <div class="col-md-4">
+   <div class="row g-0 ">
+   <div class="col-md-4 ">
      <img src="${image_url}" class="img-fluid rounded-start" alt="...">
    </div>
    <div class="col-md-8 d-flex flex-column">
@@ -73,7 +73,10 @@ data.forEach(singleNews => {
      <div class = "d-flex align-items-center">
      <i class="fa-solid fa-eye"></i>
      <p class = "m-0 p-0"> ${total_view ? total_view : "not available"}</p>
-     <i class="fa-solid fa-star"></i>
+     </div>
+     <div class="d-flex  gap-2 ">
+    ${generateStar(rating.number)}
+     <p>${rating.number}</p>
      </div>
      <div>
      <i class="fa-solid fa-arrow-right" onclick="fetchNewDetails('${_id}')" data-bs-toggle="modal"
@@ -156,4 +159,17 @@ const showTrending=()=>{
   // console.log(trendingNews)
   const category_name = document.getElementById("category-name").innerText;
 showAllNews(trendingNews,category_name)
+}
+
+// generate star
+const generateStar= rating =>{
+  let ratingHTML='';
+  for (let i =1; i <= Math.floor(rating); i++) {
+    ratingHTML += `<i class="fa-solid fa-star"></i>`
+    
+  }
+  if(rating - Math.floor(rating)>0){
+    ratingHTML +=`<i class="fa-solid fa-star-half"></i>`
+  }
+  return ratingHTML;
 }
