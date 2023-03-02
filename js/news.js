@@ -1,3 +1,4 @@
+let fetchData = [];
 const fetchCategories = () => {
     fetch('https://openapi.programming-hero.com/api/news/categories')
     .then(res => res.json())
@@ -29,7 +30,10 @@ const fetchCategoryNews = (category_id, category_name) =>{
     // console.log(url)
     fetch(url)
     .then(res => res.json())
-    .then(data => showAllNews(data.data,category_name));
+    .then(data => {
+      fetchData = data.data;
+      showAllNews(data.data,category_name)
+    });
 
 }
 
@@ -61,16 +65,15 @@ data.forEach(singleNews => {
      <div class= "d-flex gap-2">
      <img src="${author.img}" class="img-fluid rounded-circle" alt="..." height="40" width="40">
      <div>
-     <p class = "m-0 p-0"> ${singleNews.author.name}</p>
-     <p class = "m-0 p-0"> ${singleNews.author.published_date}</p>
+     <p class = "m-0 p-0"> ${author.name ? author.name : "not available"}</p>
+     <p class = "m-0 p-0"> ${author.published_date}</p>
      </div>
      
      </div>
      <div class = "d-flex align-items-center">
      <i class="fa-solid fa-eye"></i>
-     <p class = "m-0 p-0"> ${total_view}</p>
+     <p class = "m-0 p-0"> ${total_view ? total_view : "not available"}</p>
      <i class="fa-solid fa-star"></i>
-     
      </div>
      <div>
      <i class="fa-solid fa-arrow-right" onclick="fetchNewDetails('${_id}')" data-bs-toggle="modal"
@@ -97,7 +100,7 @@ fetch(url)
 } 
 const showNewDetail = (newsDetail) =>{
 // 
-const {_id,image_url,title,details,author,total_view} = newsDetail;
+const {_id,image_url,title,details,author,total_view,others_info} = newsDetail;
 
 document.getElementById("modal-body").innerHTML = `
    
@@ -108,14 +111,14 @@ document.getElementById("modal-body").innerHTML = `
    </div>
    <div class="col-md-12 d-flex flex-column">
      <div class="card-body">
-       <h5 class="card-title">${title}</h5>
+       <h5 class="card-title">${title} <span class="badge text-bg-warning">${others_info.is_trending ? "Trending" : "untrending"}</span></h5>
        <p class="card-text">${details}</p>
      </div>
      <div class="card-footer border-0 bg-body d-flex justify-content-between">
      <div class= "d-flex gap-2">
      <img src="${author.img}" class="img-fluid rounded-circle" alt="..." height="40" width="40">
      <div>
-     <p class = "m-0 p-0"> ${author.name}</p>
+     <p class = "m-0 p-0"> ${author.name ? author.name : "not available"}</p>
      <p class = "m-0 p-0"> ${author.published_date}</p>
      </div>
      
@@ -123,7 +126,7 @@ document.getElementById("modal-body").innerHTML = `
      <div class = "d-flex align-items-center">
      <i class="fa-solid fa-eye"></i>
 
-     <p class = "m-0 p-0"> ${total_view}</p>
+     <p class = "m-0 p-0"> ${total_view ? total_view : "not available"}</p>
      </div>
 
      <div>
@@ -138,4 +141,19 @@ document.getElementById("modal-body").innerHTML = `
    
    `;
    
+};
+
+// ? ternary operator(if condition else)
+// condition ? "true" : "false"
+// || if left side false then right side will be executed
+//  && if left side true then right will be executed
+// (left || right)
+
+
+// show trending
+const showTrending=()=>{
+  const trendingNews = fetchData.filter(singleData => singleData.others_info.is_trending === true );
+  // console.log(trendingNews)
+  const category_name = document.getElementById("category-name").innerText;
+showAllNews(trendingNews,category_name)
 }
